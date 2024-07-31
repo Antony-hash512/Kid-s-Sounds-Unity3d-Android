@@ -33,6 +33,12 @@ public class SoundManager : MonoBehaviour
 
     void CreateButtons()
     {
+        int columns = 4; // Количество столбцов
+        float spacingX = 200f; // Расстояние между кнопками
+        float spacingY = 50f; // Расстояние между кнопками
+        float Yoffset = 150f;
+
+
         for (int i = 0; i < audioClips.Length; i++)
         {
             GameObject button = Instantiate(buttonPrefab, buttonContainer);
@@ -42,7 +48,9 @@ public class SoundManager : MonoBehaviour
 
             // Задаем позицию кнопки
             RectTransform rectTransform = button.GetComponent<RectTransform>();
-            rectTransform.anchoredPosition = new Vector2(0, -i * 50); // Шаг 50 по оси Y
+            float x = -(columns * spacingX/2) + (i % columns) * spacingX; // Вычисляем координату X
+            float y = Yoffset- (i / columns) * spacingY; // Вычисляем координату Y (отрицательная для сдвига вниз)
+            rectTransform.anchoredPosition = new Vector2(x, y);
         }
     }
 
