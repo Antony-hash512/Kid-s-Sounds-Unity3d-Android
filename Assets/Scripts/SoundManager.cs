@@ -52,6 +52,11 @@ public class SoundManager : MonoBehaviour
             float y = Yoffset- (i / columns) * spacingY; // Вычисляем координату Y (отрицательная для сдвига вниз)
             rectTransform.anchoredPosition = new Vector2(x, y);
         }
+
+        // Устанавливаем размер контейнера Content, чтобы учесть все кнопки
+        RectTransform contentRect = buttonContainer.GetComponent<RectTransform>();
+        contentRect.sizeDelta = new Vector2(columns * spacingX, (audioClips.Length / columns + 1) * spacingY);
+
     }
 
     public void PlaySound(int clipIndex)
