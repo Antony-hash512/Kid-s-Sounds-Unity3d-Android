@@ -8,6 +8,8 @@ public class SoundManager : MonoBehaviour
 {
     public GameObject buttonPrefab; // Префаб кнопки
     public Transform buttonContainer; // Контейнер для кнопок
+    public float moveSpeed = 50f; // Скорость движения кнопок
+
     private AudioSource audioSource;
     private AudioClip[] audioClips;
     private Sprite[] buttonSprites;
@@ -71,10 +73,13 @@ public class SoundManager : MonoBehaviour
             RectTransform rectTransform = button.GetComponent<RectTransform>();
             rectTransform.sizeDelta = new Vector2(256, 256);
 
-            // Задаем позицию кнопки
+            // Задаем начальную позицию кнопки
             float x = Xoffset - (columns * spacingX / 2) + (i % columns) * spacingX; // Вычисляем координату X
             float y = Yoffset - (i / columns) * spacingY; // Вычисляем координату Y (отрицательная для сдвига вниз)
             rectTransform.anchoredPosition = new Vector2(x, y);
+
+            // Запускаем корутину для плавного движения кнопки вверх
+            StartCoroutine(MoveButtonUp(rectTransform));
         }
 
         // Устанавливаем размер контейнера Content, чтобы учесть все кнопки
@@ -88,6 +93,15 @@ public class SoundManager : MonoBehaviour
         {
             audioSource.clip = audioClips[clipIndex];
             audioSource.Play();
+        }
+    }
+
+    IEnumerator MoveButtonUp(RectTransform buttonRect)
+    {
+        while (true)
+        {
+            buttonRect.anchoredPosition += new Vector2(0, moveSpeed * Time.deltaTime);
+            yield return null;
         }
     }
 
