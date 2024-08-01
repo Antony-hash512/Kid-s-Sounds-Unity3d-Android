@@ -34,9 +34,9 @@ public class SoundManager : MonoBehaviour
     void CreateButtons()
     {
         int columns = 4; // Количество столбцов
-        float spacingX = 200f; // Расстояние между кнопками
-        float spacingY = 50f; // Расстояние между кнопками
-        float Yoffset = 150f;
+        float spacingX = 256f; // Расстояние между кнопками
+        float spacingY = 256f; // Расстояние между кнопками
+        float Yoffset = 256f;
 
 
         for (int i = 0; i < audioClips.Length; i++)
