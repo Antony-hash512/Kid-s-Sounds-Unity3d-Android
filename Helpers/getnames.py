@@ -42,6 +42,8 @@ pattern = re.compile(r'\s(\w+)\.ogg')
 # Поиск всех совпадений
 matches = pattern.findall(file_data)
 
-# Вывод имен файлов без расширения
-for match in matches:
-    print(match)
+# Заключение имен файлов в кавычки и разделение запятыми
+formatted_names = ', '.join(f'"{match}"' for match in matches)
+
+# Вывод результата
+print(formatted_names)

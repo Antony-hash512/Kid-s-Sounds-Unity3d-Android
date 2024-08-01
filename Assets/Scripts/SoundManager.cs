@@ -25,7 +25,7 @@ public class SoundManager : MonoBehaviour
     void LoadSoundsAndImages()
     {
         // Используйте Resources.Load для загрузки файлов из папки Resources
-        string[] audioFileNames = { "ma" }; // Укажите имена ваших файлов без расширения
+        string[] audioFileNames = { "ay", "ba", "be", "bi", "bu", "cha", "du", "fa", "ga", "ho", "ko", "la", "lya", "ma", "me", "mu", "my", "mye", "na", "nyu", "pa", "ru", "shi", "sho", "shsha", "so", "tsy", "ty", "vo", "wi", "za", "zha" }; // Укажите имена ваших файлов без расширения
 
         audioClips = new AudioClip[audioFileNames.Length];
         buttonSprites = new Sprite[audioFileNames.Length];
@@ -61,8 +61,8 @@ public class SoundManager : MonoBehaviour
         int columns = 4; // Количество столбцов
         float spacingX = 260f; // Расстояние между кнопками
         float spacingY = 260f; // Расстояние между кнопками
-        float Yoffset = 200f;
-        float Xoffset = 150f;
+        float Xoffset = 0f;
+        float Yoffset = 260f;
 
         for (int i = 0; i < audioClips.Length; i++)
         {
