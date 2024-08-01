@@ -24,27 +24,34 @@ public class SoundManager : MonoBehaviour
 
     void LoadSoundsAndImages()
     {
-        string oggPath = Path.Combine(Application.dataPath, "Resources/ogg");
-        string pngPath = Path.Combine(Application.dataPath, "Resources/png");
-        
-        string[] oggFiles = Directory.GetFiles(oggPath, "*.ogg");
-        string[] pngFiles = Directory.GetFiles(pngPath, "*.png");
-        
-        audioClips = new AudioClip[oggFiles.Length];
-        buttonSprites = new Sprite[pngFiles.Length];
+        // Используйте Resources.Load для загрузки файлов из папки Resources
+        string[] audioFileNames = { "ma" }; // Укажите имена ваших файлов без расширения
 
-        for (int i = 0; i < oggFiles.Length; i++)
+        audioClips = new AudioClip[audioFileNames.Length];
+        buttonSprites = new Sprite[audioFileNames.Length];
+
+        for (int i = 0; i < audioFileNames.Length; i++)
         {
-            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(oggFiles[i]);
-            string oggFilePath = "ogg/" + fileNameWithoutExtension;
-            string pngFilePath = "png/" + fileNameWithoutExtension;
-            
+            string oggFilePath = "ogg/" + audioFileNames[i];
+            string pngFilePath = "png/" + audioFileNames[i];
+
             audioClips[i] = Resources.Load<AudioClip>(oggFilePath);
+            if (audioClips[i] == null)
+            {
+                Debug.LogError("Failed to load audio clip: " + oggFilePath);
+                continue; // Пропускаем итерацию, если аудиоклип не загружен
+            }
+
             Texture2D texture = Resources.Load<Texture2D>(pngFilePath);
             if (texture != null)
             {
                 Texture2D resizedTexture = ResizeTexture(texture, 256, 256);
                 buttonSprites[i] = Sprite.Create(resizedTexture, new Rect(0, 0, resizedTexture.width, resizedTexture.height), new Vector2(0.5f, 0.5f));
+            }
+            else
+            {
+                Debug.LogError("Failed to load or resize texture: " + pngFilePath);
+                continue; // Пропускаем итерацию, если текстура не загружена или не читаема
             }
         }
     }
@@ -59,41 +66,90 @@ public class SoundManager : MonoBehaviour
 
         for (int i = 0; i < audioClips.Length; i++)
         {
+            if (audioClips[i] == null || buttonSprites[i] == null)
+            {
+                Debug.LogError("Skipping button creation for index: " + i + " due to missing audio or sprite.");
+                continue; // Пропускаем итерацию, если аудиоклип или спрайт не загружены
+            }
+
             GameObject button = Instantiate(buttonPrefab, buttonContainer);
-            button.GetComponentInChildren<Text>().text = audioClips[i].name;
+            if (button == null)
+            {
+                Debug.LogError("Failed to instantiate button prefab.");
+                continue; // Пропускаем итерацию, если кнопка не была создана
+            }
+
+            Text buttonText = button.GetComponentInChildren<Text>();
+            if (buttonText == null)
+            {
+                Debug.LogError("Button prefab is missing Text component.");
+                continue; // Пропускаем итерацию, если у кнопки нет компонента Text
+            }
+
+            buttonText.text = audioClips[i].name;
             int clipIndex = i;
-            button.GetComponent<Button>().onClick.AddListener(() => PlaySound(clipIndex));
+            Button uiButton = button.GetComponent<Button>();
+            if (uiButton == null)
+            {
+                Debug.LogError("Button prefab is missing Button component.");
+                continue; // Пропускаем итерацию, если у кнопки нет компонента Button
+            }
+
+            uiButton.onClick.AddListener(() => PlaySound(clipIndex));
 
             // Устанавливаем изображение на кнопке
-            if (buttonSprites[i] != null)
+            Image buttonImage = button.GetComponent<Image>();
+            if (buttonImage != null)
             {
-                button.GetComponent<Image>().sprite = buttonSprites[i];
+                buttonImage.sprite = buttonSprites[i];
+            }
+            else
+            {
+                Debug.LogError("Button prefab is missing Image component.");
             }
 
             // Задаем размер кнопки
             RectTransform rectTransform = button.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(256, 256);
+            if (rectTransform != null)
+            {
+                rectTransform.sizeDelta = new Vector2(256, 256);
 
-            // Задаем начальную позицию кнопки
-            float x = Xoffset - (columns * spacingX / 2) + (i % columns) * spacingX; // Вычисляем координату X
-            float y = Yoffset - (i / columns) * spacingY; // Вычисляем координату Y (отрицательная для сдвига вниз)
-            rectTransform.anchoredPosition = new Vector2(x, y);
+                // Задаем начальную позицию кнопки
+                float x = Xoffset - (columns * spacingX / 2) + (i % columns) * spacingX; // Вычисляем координату X
+                float y = Yoffset - (i / columns) * spacingY; // Вычисляем координату Y (отрицательная для сдвига вниз)
+                rectTransform.anchoredPosition = new Vector2(x, y);
 
-            // Запускаем корутину для плавного движения кнопки вверх
-            StartCoroutine(MoveButtonUp(rectTransform, spacingY * (audioClips.Length / columns)));
+                // Запускаем корутину для плавного движения кнопки вверх
+                StartCoroutine(MoveButtonUp(rectTransform, spacingY * (audioClips.Length / columns)));
+            }
+            else
+            {
+                Debug.LogError("Button prefab is missing RectTransform component.");
+            }
         }
 
         // Устанавливаем размер контейнера Content, чтобы учесть все кнопки
         RectTransform contentRect = buttonContainer.GetComponent<RectTransform>();
-        contentRect.sizeDelta = new Vector2(columns * spacingX, (audioClips.Length / columns) * spacingY);
+        if (contentRect != null)
+        {
+            contentRect.sizeDelta = new Vector2(columns * spacingX, (audioClips.Length / columns) * spacingY);
+        }
+        else
+        {
+            Debug.LogError("Button container is missing RectTransform component.");
+        }
     }
 
     public void PlaySound(int clipIndex)
     {
-        if (clipIndex >= 0 && clipIndex < audioClips.Length)
+        if (clipIndex >= 0 && clipIndex < audioClips.Length && audioClips[clipIndex] != null)
         {
             audioSource.clip = audioClips[clipIndex];
             audioSource.Play();
+        }
+        else
+        {
+            Debug.LogError("Invalid clip index or audio clip is null: " + clipIndex);
         }
     }
 
