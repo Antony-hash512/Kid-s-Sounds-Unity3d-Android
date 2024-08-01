@@ -8,7 +8,7 @@ public class SoundManager : MonoBehaviour
 {
     public GameObject buttonPrefab; // Префаб кнопки
     public Transform buttonContainer; // Контейнер для кнопок
-    public float moveSpeed = 50f; // Скорость движения кнопок
+    public float moveSpeed = 100f; // Скорость движения кнопок
     public float resetYPosition = 800f; // Фиксированная координата Y за пределами экрана сверху
 
     private AudioSource audioSource;
