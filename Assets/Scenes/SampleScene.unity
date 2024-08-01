@@ -427,8 +427,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonPrefab: {fileID: 81837425484056711, guid: 9f9c2c7e0a1f43649a2f6fac42e32f30, type: 3}
   buttonContainer: {fileID: 497564652}
-  moveSpeed: 150
-  resetYPosition: 800
+  moveSpeed: 250
+  resetYPosition: 2800
 --- !u!114 &968736661
 MonoBehaviour:
   m_ObjectHideFlags: 0

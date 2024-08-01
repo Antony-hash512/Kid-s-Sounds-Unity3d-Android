@@ -8,8 +8,8 @@ public class SoundManager : MonoBehaviour
 {
     public GameObject buttonPrefab; // Префаб кнопки
     public Transform buttonContainer; // Контейнер для кнопок
-    public float moveSpeed = 100f; // Скорость движения кнопок
-    public float resetYPosition = 800f; // Фиксированная координата Y за пределами экрана сверху
+    public float moveSpeed = 250f; // Скорость движения кнопок
+    public float resetYPosition = 2800f; // Фиксированная координата Y за пределами экрана сверху
 
     private AudioSource audioSource;
     private AudioClip[] audioClips;
@@ -45,7 +45,7 @@ public class SoundManager : MonoBehaviour
             Texture2D texture = Resources.Load<Texture2D>(pngFilePath);
             if (texture != null)
             {
-                Texture2D resizedTexture = ResizeTexture(texture, 256, 256);
+                Texture2D resizedTexture = ResizeTexture(texture, 1024, 1024);
                 buttonSprites[i] = Sprite.Create(resizedTexture, new Rect(0, 0, resizedTexture.width, resizedTexture.height), new Vector2(0.5f, 0.5f));
             }
             else
@@ -58,10 +58,10 @@ public class SoundManager : MonoBehaviour
 
     void CreateButtons()
     {
-        int columns = 4; // Количество столбцов
-        float spacingX = 260f; // Расстояние между кнопками
-        float spacingY = 260f; // Расстояние между кнопками
-        float Xoffset = 0f;
+        int columns = 2; // Количество столбцов
+        float spacingX = 1030f; // Расстояние между кнопками
+        float spacingY = 1030f; // Расстояние между кнопками
+        float Xoffset = 500f;
         float Yoffset = 260f;
 
         for (int i = 0; i < audioClips.Length; i++)
@@ -112,7 +112,7 @@ public class SoundManager : MonoBehaviour
             RectTransform rectTransform = button.GetComponent<RectTransform>();
             if (rectTransform != null)
             {
-                rectTransform.sizeDelta = new Vector2(256, 256);
+                rectTransform.sizeDelta = new Vector2(1024, 1024);
 
                 // Задаем начальную позицию кнопки
                 float x = Xoffset - (columns * spacingX / 2) + (i % columns) * spacingX; // Вычисляем координату X
