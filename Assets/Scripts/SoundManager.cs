@@ -9,6 +9,7 @@ public class SoundManager : MonoBehaviour
     public GameObject buttonPrefab; // Префаб кнопки
     public Transform buttonContainer; // Контейнер для кнопок
     public float moveSpeed = 50f; // Скорость движения кнопок
+    public float resetYPosition = 800f; // Фиксированная координата Y за пределами экрана сверху
 
     private AudioSource audioSource;
     private AudioClip[] audioClips;
@@ -79,12 +80,12 @@ public class SoundManager : MonoBehaviour
             rectTransform.anchoredPosition = new Vector2(x, y);
 
             // Запускаем корутину для плавного движения кнопки вверх
-            StartCoroutine(MoveButtonUp(rectTransform));
+            StartCoroutine(MoveButtonUp(rectTransform, spacingY * (audioClips.Length / columns)));
         }
 
         // Устанавливаем размер контейнера Content, чтобы учесть все кнопки
         RectTransform contentRect = buttonContainer.GetComponent<RectTransform>();
-        contentRect.sizeDelta = new Vector2(columns * spacingX, (audioClips.Length / columns + 1) * spacingY);
+        contentRect.sizeDelta = new Vector2(columns * spacingX, (audioClips.Length / columns) * spacingY);
     }
 
     public void PlaySound(int clipIndex)
@@ -96,12 +97,19 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    IEnumerator MoveButtonUp(RectTransform buttonRect)
+    IEnumerator MoveButtonUp(RectTransform buttonRect, float totalHeight)
     {
         while (true)
         {
             buttonRect.anchoredPosition += new Vector2(0, moveSpeed * Time.deltaTime);
-            yield return null;
+
+            if (buttonRect.anchoredPosition.y >= resetYPosition)
+            {
+                buttonRect.anchoredPosition -= new Vector2(0, totalHeight);
+            }
+
+            //yield return null;
+            yield return new WaitForSeconds(0.0001f); // Пауза между кадрами, чтобы контролировать скорость обновления
         }
     }
 
